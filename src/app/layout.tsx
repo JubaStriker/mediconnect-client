@@ -1,6 +1,5 @@
 import React from 'react'
-import { ApolloProvider } from '@apollo/client'
-import client from '@/lib/apollo-client'
+import { ApolloProviderWrapper } from '@/providers/ApolloProviderWrapper'
 import './globals.css'
 
 export const metadata = {
@@ -16,9 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ApolloProvider client={client}>
+        <ApolloProviderWrapper>
           {children}
-        </ApolloProvider>
+        </ApolloProviderWrapper>
       </body>
     </html>
   )
