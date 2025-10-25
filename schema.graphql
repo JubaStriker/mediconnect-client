@@ -1,0 +1,220 @@
+# Expected Backend GraphQL Schema
+
+# This file documents the GraphQL schema that your backend should implement
+# to work with this frontend application.
+
+# Enums
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum MedicalHistoryStatus {
+  ACTIVE
+  RESOLVED
+  CHRONIC
+}
+
+# Types
+type Address {
+  street: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+type Patient {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  dateOfBirth: String!
+  gender: Gender!
+  address: Address
+  medicalHistory: [MedicalHistory!]
+  appointments: [Appointment!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Doctor {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  specialization: String!
+  licenseNumber: String!
+  availability: [Availability!]
+  appointments: [Appointment!]
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Appointment {
+  id: ID!
+  patientId: String!
+  doctorId: String!
+  patient: Patient
+  doctor: Doctor
+  dateTime: String!
+  duration: Int!
+  status: AppointmentStatus!
+  reason: String!
+  notes: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type MedicalHistory {
+  id: ID!
+  patientId: String!
+  condition: String!
+  diagnosedDate: String!
+  status: MedicalHistoryStatus!
+  notes: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Availability {
+  id: ID!
+  doctorId: String!
+  dayOfWeek: Int!
+  startTime: String!
+  endTime: String!
+  isAvailable: Boolean!
+}
+
+# Input Types
+input AddressInput {
+  street: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  country: String!
+}
+
+input CreatePatientInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  dateOfBirth: String!
+  gender: Gender!
+  address: AddressInput
+}
+
+input UpdatePatientInput {
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+  dateOfBirth: String
+  gender: Gender
+  address: AddressInput
+}
+
+input CreateAppointmentInput {
+  patientId: ID!
+  doctorId: ID!
+  dateTime: String!
+  duration: Int!
+  reason: String!
+  notes: String
+}
+
+input UpdateAppointmentInput {
+  dateTime: String
+  duration: Int
+  status: AppointmentStatus
+  reason: String
+  notes: String
+}
+
+# Queries
+type Query {
+  # Patient Queries
+  patients(limit: Int, offset: Int): [Patient!]!
+  patient(id: ID!): Patient
+
+  # Doctor Queries
+  doctors(specialization: String): [Doctor!]!
+  doctor(id: ID!): Doctor
+
+  # Appointment Queries
+  appointments(
+    patientId: ID
+    doctorId: ID
+    status: AppointmentStatus
+  ): [Appointment!]!
+  appointment(id: ID!): Appointment
+
+  # Medical History
+  medicalHistory(patientId: ID!): [MedicalHistory!]!
+}
+
+# Mutations
+type Mutation {
+  # Patient Mutations
+  createPatient(input: CreatePatientInput!): Patient!
+  updatePatient(id: ID!, input: UpdatePatientInput!): Patient!
+  deletePatient(id: ID!): Boolean!
+
+  # Appointment Mutations
+  createAppointment(input: CreateAppointmentInput!): Appointment!
+  updateAppointment(id: ID!, input: UpdateAppointmentInput!): Appointment!
+  cancelAppointment(id: ID!): Appointment!
+  deleteAppointment(id: ID!): Boolean!
+
+  # Medical History Mutations
+  createMedicalHistory(
+    patientId: ID!
+    condition: String!
+    diagnosedDate: String!
+    status: MedicalHistoryStatus!
+    notes: String
+  ): MedicalHistory!
+}
+
+# Notes for Backend Implementation:
+# 
+# 1. Authentication & Authorization:
+#    - Implement JWT or session-based authentication
+#    - Add role-based access control (patient, doctor, admin)
+#    - Protect sensitive endpoints
+#
+# 2. Data Validation:
+#    - Validate email formats
+#    - Check phone number formats
+#    - Ensure date fields are valid ISO strings
+#
+# 3. Error Handling:
+#    - Return meaningful error messages
+#    - Use proper GraphQL error extensions
+#
+# 4. CORS Configuration:
+#    - Allow requests from your frontend domain
+#    - Include credentials if using cookies
+#
+# 5. Database:
+#    - Implement proper indexes for performance
+#    - Use Prisma schema matching these types
+#    - Handle cascading deletes appropriately
+#
+# 6. Business Logic:
+#    - Prevent double-booking appointments
+#    - Validate doctor availability
+#    - Send confirmation emails/SMS
