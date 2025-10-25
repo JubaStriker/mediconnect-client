@@ -1,10 +1,11 @@
 import React from 'react'
+import type { Metadata } from "next"
 import { ApolloProviderWrapper } from '@/providers/ApolloProviderWrapper'
 import './globals.css'
 
-export const metadata = {
-  title: 'Medical Service Portal',
-  description: 'Healthcare management system',
+export const metadata: Metadata = {
+  title: "MediConnect - Healthcare Services",
+  description: "Connect with doctors and manage your healthcare online",
 }
 
 export default function RootLayout({
@@ -14,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`font-sans antialiased`}>
         <ApolloProviderWrapper>
           {children}
         </ApolloProviderWrapper>
